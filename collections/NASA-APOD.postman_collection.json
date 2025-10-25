@@ -1,0 +1,599 @@
+{
+	"info": {
+		"_postman_id": "cb8d7c2b-2919-455a-a99d-eb4e12b91827",
+		"name": "Nasa_APOD_API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25244668"
+	},
+	"item": [
+		{
+			"name": "getApodByDate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const resBody = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Header X-Ratelimit-Remaining is present\", function () {\r",
+							"    pm.response.to.have.header(\"X-Ratelimit-Remaining\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body contain valid title\", function () {            \r",
+							"    pm.expect(resBody.title).to.be.a(\"string\");\r",
+							"    pm.expect(resBody.title).to.have.lengthOf.at.least(1); \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body contain valid url\", function () {\r",
+							"    pm.expect(resBody.url).to.match(/https:\\/\\/apod\\.nasa\\.gov\\/apod\\/image\\//); \r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}planetary/apod?api_key={{api_key}}&date={{yesterday}}",
+					"host": [
+						"{{baseURL}}planetary"
+					],
+					"path": [
+						"apod"
+					],
+					"query": [
+						{
+							"key": "api_key",
+							"value": "{{api_key}}"
+						},
+						{
+							"key": "date",
+							"value": "{{yesterday}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getApodWithoutDate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const resBody = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Header Date is present\", function () {\r",
+							"    pm.response.to.have.header(\"Date\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Should be current date if date is not provided\", function () {\r",
+							"    const dateInBody = resBody.date; \r",
+							"    const currentDate = pm.collectionVariables.get(\"currentDate\")\r",
+							"    pm.expect(dateInBody).to.eql(currentDate); \r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}planetary/apod?api_key={{api_key}}&date=",
+					"host": [
+						"{{baseURL}}planetary"
+					],
+					"path": [
+						"apod"
+					],
+					"query": [
+						{
+							"key": "api_key",
+							"value": "{{api_key}}"
+						},
+						{
+							"key": "date",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getApodFromStartDate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Header Age is present\", function () {\r",
+							"    pm.response.to.have.header(\"Age\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"X-Ratelimit-Limit more than X-Ratelimit-Remaining\", function () {\r",
+							"    const limit = Number(pm.response.headers.get(\"X-Ratelimit-Limit\"));\r",
+							"    const remaining = Number(pm.response.headers.get(\"X-Ratelimit-Remaining\"));\r",
+							"    pm.expect(remaining).to.be.below(limit);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify that media_type is image\", function () {\r",
+							"    const resBody = pm.response.json();\r",
+							"    for (const item of resBody)  {\r",
+							"        pm.expect(item.media_type).to.eql(\"image\");\r",
+							"    };\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}planetary/apod?api_key={{api_key}}&start_date={{yesterday}}",
+					"host": [
+						"{{baseURL}}planetary"
+					],
+					"path": [
+						"apod"
+					],
+					"query": [
+						{
+							"key": "api_key",
+							"value": "{{api_key}}"
+						},
+						{
+							"key": "start_date",
+							"value": "{{yesterday}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getApodByDateRange",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const resBody = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"X-Ratelimit-Limit is equal 4000\", function () {\r",
+							"    pm.expect(pm.response.headers.get(\"X-Ratelimit-Limit\")).to.eql(\"4000\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify that the response body is an array\", function () {\r",
+							"    pm.expect(Array.isArray(resBody)).to.be.true;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has expected properties\", () => {\r",
+							"    for (const item of resBody) {\r",
+							"        pm.expect(item).to.have.property(\"copyright\");\r",
+							"        pm.expect(item).to.have.property(\"date\");\r",
+							"        pm.expect(item).to.have.property(\"explanation\");\r",
+							"        pm.expect(item).to.have.property(\"hdurl\");\r",
+							"        pm.expect(item).to.have.property(\"media_type\");\r",
+							"        pm.expect(item).to.have.property(\"service_version\");\r",
+							"        pm.expect(item).to.have.property(\"title\");\r",
+							"        pm.expect(item).to.have.property(\"url\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}planetary/apod?api_key={{api_key}}&start_date={{yesterday}}&end_date={{currentDate}}",
+					"host": [
+						"{{baseURL}}planetary"
+					],
+					"path": [
+						"apod"
+					],
+					"query": [
+						{
+							"key": "api_key",
+							"value": "{{api_key}}"
+						},
+						{
+							"key": "start_date",
+							"value": "{{yesterday}}"
+						},
+						{
+							"key": "end_date",
+							"value": "{{currentDate}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getApodByCount",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Header X-Ratelimit-Limit is defined\", function () {\r",
+							"    const limit = Number(pm.response.headers.get(\"X-Ratelimit-Limit\"));\r",
+							"    pm.expect(limit).to.not.be.null;\r",
+							"    pm.expect(limit).to.not.be.undefined;\r",
+							"    pm.expect(limit).to.be.above(0);\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Number of images received is equal to Count\", function () {\r",
+							"    let resBody = pm.response.json();\r",
+							"    let imgCount = Number(pm.collectionVariables.get(\"imgCount\"));\r",
+							"    const receivedImg = resBody.length; \r",
+							"    pm.expect(receivedImg).to.equal(imgCount);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}planetary/apod?api_key={{api_key}}&count={{imgCount}}",
+					"host": [
+						"{{baseURL}}planetary"
+					],
+					"path": [
+						"apod"
+					],
+					"query": [
+						{
+							"key": "api_key",
+							"value": "{{api_key}}"
+						},
+						{
+							"key": "count",
+							"value": "{{imgCount}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getApotWithThumbs",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is application/json\", function () {\r",
+							"  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Date is today\", function () {\r",
+							"    const today = pm.collectionVariables.get(\"currentDate\");\r",
+							"    const dateInBody = pm.response.json().date;\r",
+							"    pm.expect(dateInBody).to.equal(today);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}planetary/apod?api_key={{api_key}}&thumbs=true",
+					"host": [
+						"{{baseURL}}planetary"
+					],
+					"path": [
+						"apod"
+					],
+					"query": [
+						{
+							"key": "api_key",
+							"value": "{{api_key}}"
+						},
+						{
+							"key": "thumbs",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getApodWithoutAuth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const resBody = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 403\", function () {\r",
+							"    pm.response.to.have.status(403);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Has header Access-Control-Allow-Origin\", function () {\r",
+							"    pm.response.to.have.header(\"Access-Control-Allow-Origin\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error handling for non-authorized user\", () => {\r",
+							"  pm.expect(resBody.error.code).to.equal(\"API_KEY_MISSING\");\r",
+							"  pm.expect(resBody.error.message).to.contain(\"No api_key was supplied. Get one at https://api.nasa.gov:443\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test data type of the response\", () => {\r",
+							"  pm.expect(resBody).to.be.an(\"object\");\r",
+							"  pm.expect(resBody.error).to.be.an(\"object\");\r",
+							"  pm.expect(resBody.error.code).to.be.a(\"string\");\r",
+							"  pm.expect(resBody.error.message).to.be.a(\"string\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/planetary/apod?date=2025-08-01",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"planetary",
+						"apod"
+					],
+					"query": [
+						{
+							"key": "date",
+							"value": "2025-08-01"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getApodByInvalidDateRange",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const resBody = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Has header Access-Control-Expose-Headers\", function () {\r",
+							"    pm.response.to.have.header(\"Access-Control-Expose-Headers\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error handling for non-authorized user\", () => {\r",
+							"  pm.expect(resBody.msg).to.contain(\"start_date cannot be after end_date\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test data type of the response\", () => {\r",
+							"  pm.expect(resBody).to.be.an(\"object\");\r",
+							"  pm.expect(resBody.code).to.be.a(\"number\");\r",
+							"  pm.expect(resBody.msg).to.be.a(\"string\");\r",
+							"  pm.expect(resBody.service_version).to.be.a(\"string\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}planetary/apod?api_key={{api_key}}&start_date={{currentDate}}&end_date={{yesterday}}",
+					"host": [
+						"{{baseURL}}planetary"
+					],
+					"path": [
+						"apod"
+					],
+					"query": [
+						{
+							"key": "api_key",
+							"value": "{{api_key}}"
+						},
+						{
+							"key": "start_date",
+							"value": "{{currentDate}}"
+						},
+						{
+							"key": "end_date",
+							"value": "{{yesterday}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getApodWithCountAndDate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const resBody = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Has header X-Api-Umbrella-Request-Id\", function () {\r",
+							"    pm.response.to.have.header(\"X-Api-Umbrella-Request-Id\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error handling for non-authorized user\", () => {\r",
+							"  pm.expect(resBody.msg).to.contain(\"Bad Request: invalid field combination passed.\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test data type of the response\", () => {\r",
+							"  pm.expect(resBody).to.be.an(\"object\");\r",
+							"  pm.expect(resBody.code).to.be.a(\"number\");\r",
+							"  pm.expect(resBody.msg).to.be.a(\"string\");\r",
+							"  pm.expect(resBody.service_version).to.be.a(\"string\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}planetary/apod?api_key={{api_key}}&count={{imgCount}}&date={{yesterday}}",
+					"host": [
+						"{{baseURL}}planetary"
+					],
+					"path": [
+						"apod"
+					],
+					"query": [
+						{
+							"key": "api_key",
+							"value": "{{api_key}}"
+						},
+						{
+							"key": "count",
+							"value": "{{imgCount}}"
+						},
+						{
+							"key": "date",
+							"value": "{{yesterday}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"let currentDate = new Date().toISOString().split('T')[0]\r",
+					"pm.collectionVariables.set(\"currentDate\", currentDate);\r",
+					"\r",
+					"let yesterday = new Date(Date.now() - 86400000) // 24*60*60*1000 мс\r",
+					"  .toISOString()\r",
+					"  .split('T')[0];\r",
+					"pm.collectionVariables.set(\"yesterday\", yesterday);\r",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "https://api.nasa.gov/",
+			"type": "string"
+		},
+		{
+			"key": "api_key",
+			"value": "JzaeM8dMrWZzUG3ZdpLQa2epUNbO13aSFosayUY4",
+			"type": "string"
+		},
+		{
+			"key": "currentDate",
+			"value": ""
+		},
+		{
+			"key": "yesterday",
+			"value": ""
+		},
+		{
+			"key": "imgCount",
+			"value": "3",
+			"type": "string"
+		}
+	]
+}
